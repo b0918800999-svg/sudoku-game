@@ -3,15 +3,15 @@
 import { useEffect, useState } from "react";
 
 const initialBoard = [
-  [5,3,"","",7,"","","",""],
-  [6,"","",1,9,5,"","",""],
-  ["",9,8,"","","","",6,""],
-  [8,"","","",6,"","","",3],
-  [4,"","",8,"",3,"","",1],
-  [7,"","","",2,"","","",6],
-  ["",6,"","","","",2,8,""],
-  ["","","",4,1,9,"","",5],
-  ["","","","",8,"","",7,9],
+  [5, 3, "", "", 7, "", "", "", ""],
+  [6, "", "", 1, 9, 5, "", "", ""],
+  ["", 9, 8, "", "", "", "", 6, ""],
+  [8, "", "", "", 6, "", "", "", 3],
+  [4, "", "", 8, "", 3, "", "", 1],
+  [7, "", "", "", 2, "", "", "", 6],
+  ["", 6, "", "", "", "", 2, 8, ""],
+  ["", "", "", 4, 1, 9, "", "", 5],
+  ["", "", "", "", 8, "", "", 7, 9],
 ];
 
 export default function SudokuGame() {
@@ -26,12 +26,10 @@ export default function SudokuGame() {
     return () => clearInterval(timer);
   }, []);
 
-  const handleChange = (row: number, col: number, value: string) => {
-    if (initialBoard[row][col] !== "") return;
-
-    const newBoard = [...board];
-    newBoard[row][col] = value;
-    setBoard(newBoard);
+  const formatTime = () => {
+    const mins = String(Math.floor(seconds / 60)).padStart(2, "0");
+    const secs = String(seconds % 60).padStart(2, "0");
+    return `${mins}:${secs}`;
   };
 
   const resetGame = () => {
@@ -39,10 +37,13 @@ export default function SudokuGame() {
     setSeconds(0);
   };
 
-  const formatTime = () => {
-    const mins = String(Math.floor(seconds / 60)).padStart(2, "0");
-    const secs = String(seconds % 60).padStart(2, "0");
-    return `${mins}:${secs}`;
+  const handleChange = (row: number, col: number, value: string) => {
+    if (initialBoard[row][col] !== "") return;
+    if (value !== "" && !/^[1-9]$/.test(value)) return;
+
+    const newBoard = board.map((r) => [...r]);
+    newBoard[row][col] = value;
+    setBoard(newBoard);
   };
 
   return (
@@ -54,24 +55,37 @@ export default function SudokuGame() {
         alignItems: "center",
         justifyContent: "center",
         fontFamily: "sans-serif",
-        background: "#f5f5f5",
+        background:
+          "linear-gradient(135deg, #111827, #312e81, #7c2d12)",
+        color: "white",
+        padding: "20px",
       }}
     >
       <h1 style={{ fontSize: "48px", marginBottom: "10px" }}>
-        🧩 數獨遊戲
+        🧩 楊家將數獨
       </h1>
 
-      <div style={{ fontSize: "28px", marginBottom: "20px" }}>
+      <div
+        style={{
+          fontSize: "28px",
+          marginBottom: "20px",
+          background: "rgba(255,255,255,0.15)",
+          padding: "10px 22px",
+          borderRadius: "999px",
+        }}
+      >
         ⏱ {formatTime()}
       </div>
 
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(9, 50px)",
-          gap: "2px",
-          background: "#333",
-          padding: "5px",
+          gridTemplateColumns: "repeat(9, 46px)",
+          gap: "3px",
+          background: "rgba(255,255,255,0.35)",
+          padding: "8px",
+          borderRadius: "14px",
+          boxShadow: "0 0 30px rgba(255,255,255,0.35)",
         }}
       >
         {board.map((row, rowIndex) =>
@@ -80,18 +94,23 @@ export default function SudokuGame() {
               key={`${rowIndex}-${colIndex}`}
               value={cell}
               maxLength={1}
+              inputMode="numeric"
               onChange={(e) =>
                 handleChange(rowIndex, colIndex, e.target.value)
               }
               style={{
-                width: "50px",
-                height: "50px",
+                width: "46px",
+                height: "46px",
                 textAlign: "center",
-                fontSize: "24px",
-                border: "1px solid #ccc",
+                fontSize: "23px",
+                border: "1px solid rgba(255,255,255,0.5)",
+                borderRadius: "6px",
+                color: "#111827",
+                fontWeight:
+                  initialBoard[rowIndex][colIndex] !== "" ? "bold" : "normal",
                 background:
                   initialBoard[rowIndex][colIndex] !== ""
-                    ? "#e5e5e5"
+                    ? "#fde68a"
                     : "white",
               }}
             />
@@ -102,14 +121,16 @@ export default function SudokuGame() {
       <button
         onClick={resetGame}
         style={{
-          marginTop: "20px",
-          padding: "12px 24px",
+          marginTop: "24px",
+          padding: "14px 34px",
           fontSize: "20px",
-          borderRadius: "10px",
+          borderRadius: "999px",
           border: "none",
-          background: "#222",
-          color: "white",
+          background: "linear-gradient(135deg, #facc15, #fb923c)",
+          color: "#111827",
+          fontWeight: "bold",
           cursor: "pointer",
+          boxShadow: "0 8px 20px rgba(0,0,0,0.35)",
         }}
       >
         重新開始
